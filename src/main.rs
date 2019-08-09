@@ -38,7 +38,7 @@ struct Path {
     path: String,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
 enum Category {
     Test,
@@ -60,7 +60,7 @@ struct Line {
 }
 
 impl Line {
-    fn classify(path: &str) -> Category {
+    fn categorize(path: &str) -> Category {
         if path.contains("test") {
             Category::Test
         } else {
@@ -84,7 +84,7 @@ impl Into<Line> for (String, Header, Path) {
                 path,
             },
         ) = self;
-        let category = Line::classify(&path);
+        let category = Line::categorize(&path);
         let ext = StdPath::new(&path)
             .extension()
             .map(std::ffi::OsStr::to_str)
@@ -165,5 +165,15 @@ mod tests {
     fn path_line_parses() -> Result<(), Box<dyn Error>> {
         let _: Path = r#"6       3       foo/bar/baz.rs"#.parse()?;
         Ok(())
+    }
+
+    #[test]
+    fn paths_with_test_are_categorized() {
+        assert_eq!(Line::categorize("foo/test/bar.txt"), Category::Test)
+    }
+
+    #[test]
+    fn paths_without_test_are_categorized() {
+        assert_eq!(Line::categorize("foo/bar/baz.txt"), Category::Default)
     }
 }
