@@ -3,11 +3,12 @@
 //! `git log --pretty=format:'"%H","%ae","%ai"' --numstat --no-merges`
 use recap::Recap;
 use serde::{Deserialize, Serialize};
-use std::convert::identity;
-use std::error::Error;
-use std::io::stdin;
-use std::io::BufRead;
-use std::path::Path as StdPath;
+use std::{
+    convert::identity,
+    error::Error,
+    io::{stdin, BufRead},
+    path::Path as StdPath,
+};
 
 #[derive(Clone, Deserialize, Recap)]
 #[recap(regex = r#"(?x)
