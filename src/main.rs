@@ -6,7 +6,8 @@ use serde::{Deserialize, Serialize};
 use std::{
     convert::identity,
     error::Error,
-    io::{stdin, BufRead},
+    fs::File,
+    io::{stdin, BufRead, BufReader},
     path::Path as StdPath,
 };
 
@@ -123,11 +124,49 @@ impl Emitter for Stdout {
     }
 }
 
+use structopt::StructOpt;
+
+#[derive(Debug, StructOpt)]
+#[structopt(
+    name = "git-linecat",
+    about = "A tool for transforming and categorizing git log data"
+)]
+struct Options {
+    #[structopt(short = "r", long = "repository", help = "Repository name")]
+    repository: String,
+    #[structopt(
+        short = "l",
+        long = "logs",
+        help = "Path to git log output. use `-` to read from stdin",
+        default_value = "-"
+    )]
+    logs: String,
+}
+
 fn main() -> Result<(), Box<dyn Error>> {
-    stdin()
-        .lock()
-        .lines()
-        .filter_map(Result::ok)
+    let Options { repository, logs } = Options::from_args();
+    match &logs[..] {
+        "-" => run(
+            repository,
+            &mut stdin().lock().lines().filter_map(Result::ok),
+        ),
+        _ => run(
+            repository,
+            &mut BufReader::new(&File::open(logs)?)
+                .lines()
+                .filter_map(Result::ok),
+        ),
+    }
+}
+
+fn run<L>(
+    repository: String,
+    lines: &mut L,
+) -> Result<(), Box<dyn Error>>
+where
+    L: Iterator<Item = String>,
+{
+    lines
         .try_fold(State::Reset, |state, line| {
             Ok(match state {
                 State::Reset => State::Next(line.parse()?),
@@ -144,7 +183,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                     } else {
                         State::Next(header.clone())
                     };
-                    Stdout::emit(("".to_string(), header, diff).into())?;
+                    Stdout::emit((repository.clone(), header, diff).into())?;
                     next
                 }
             })
