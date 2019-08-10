@@ -2,7 +2,13 @@
 
 > 😽 a utility for transforming and categorizing git log output
 
-## usage
+## 🤔 about
+
+The only constant in software is change which begs the question. What kind of patterns
+of change occur in your software project. Git is a database of change but does not provide
+an interface for analyizing that change. This is where `git-linecat` comes in.
+
+## 🤸usage
 
 Expects input in the form
 
@@ -12,7 +18,7 @@ $ git log --pretty=format:'"%H","%ae","%ai"' --numstat --no-merge
 
 Emits output in the form of [newline delimited json](http://ndjson.org/) for further analysis
 
-## analyzing data
+### analyzing data
 
 [AWS Athena](https://aws.amazon.com/athena/) makes it easy to ask and answer questions about your json-formatted git data. 
 
@@ -41,5 +47,51 @@ CREATE EXTERNAL TABLE if not exists gitlog (
 ROW FORMAT SERDE 'org.openx.data.jsonserde.JsonSerDe'
 LOCATION 's3://your-s3-bucket/'
 ```
+
+### Sample queries
+
+#### kinds of files by ordered by frequency of change
+
+
+```sql
+select ext, count(*) as cnt
+from gitlog
+group by ext
+order by cnt desc
+```
+
+#### top 10 paths by frequency of change
+
+```sql
+select count(*) as cnt, path
+from gitlog
+group by path
+order by cnt desc
+limit 10
+```
+
+### top paths introducing net additions to code
+
+```sql
+select path, sum(additions - deletions) as net_adds
+from gitlog
+group by path
+order by net_adds desc
+```
+
+### top changers of code ownership
+
+```sql
+select count(*) as changes, author
+from gitlog
+where path = 'CODEOWNERS'
+group by author
+order by changes desc
+```
+
+## 👩‍🏭 development
+
+This is a [rustlang](https://www.rust-lang.org/en-US/) application.
+Go grab yourself a copy with [rustup](https://rustup.rs/).
 
 Meetup, Inc.
