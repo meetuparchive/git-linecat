@@ -191,7 +191,7 @@ where
                         // binary file
                         State::Next(header)
                     } else {
-                        // we expect a path, but some commits pay be empty (no path) so we must be flexible
+                        // we expect a path, but some commits may be empty (no path) so we must be flexible
                         match line.parse::<Path>() {
                             Ok(path) => State::Emit(header, path),
                             _ => State::Next(line.parse()?),
