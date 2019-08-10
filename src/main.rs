@@ -152,6 +152,7 @@ struct Options {
     logs: String,
 }
 
+#[cfg_attr(tarpaulin, skip)]
 fn main() -> Result<(), Box<dyn Error>> {
     let Options { repository, logs } = Options::from_args();
     match &logs[..] {
