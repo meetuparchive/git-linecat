@@ -18,7 +18,7 @@ $ git log --pretty=format:'"%H","%ae","%ai"' --numstat --no-merge
 
 Emits output in the form of [newline delimited json](http://ndjson.org/) for further analysis
 
-### analyzing data
+### 👩‍🔬analyzing data
 
 [AWS Athena](https://aws.amazon.com/athena/) makes it easy to ask and answer questions about your json-formatted git data. 
 
@@ -48,7 +48,7 @@ ROW FORMAT SERDE 'org.openx.data.jsonserde.JsonSerDe'
 LOCATION 's3://your-s3-bucket/'
 ```
 
-### Sample queries
+### 🔎 Sample queries
 
 #### kinds of files by ordered by frequency of change
 
@@ -88,6 +88,10 @@ where path = 'CODEOWNERS'
 group by author
 order by changes desc
 ```
+
+### tips
+
+You may find [these functions](https://docs.aws.amazon.com/athena/latest/ug/functions-operators-reference-section.html) helpful in authoring queries.
 
 ## 👩‍🏭 development
 
