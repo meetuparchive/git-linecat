@@ -4,8 +4,8 @@
 use recap::Recap;
 use serde::{Deserialize, Serialize};
 use std::{
-    convert::identity,
     error::Error,
+    ffi::OsStr,
     fs::File,
     io::{stdin, BufRead, BufReader},
     path::Path as StdPath,
@@ -92,8 +92,7 @@ impl Into<Change> for (String, Header, Path) {
         let category = Change::categorize(&path);
         let ext = StdPath::new(&path)
             .extension()
-            .map(std::ffi::OsStr::to_str)
-            .and_then(identity)
+            .and_then(OsStr::to_str)
             .map(|s| s.into());
         Change {
             repo,
