@@ -51,7 +51,7 @@ enum Category {
 }
 
 #[derive(Debug, Serialize)]
-struct Line {
+struct Change {
     repo: String,
     sha: String,
     author: String,
@@ -64,7 +64,7 @@ struct Line {
     deletions: usize,
 }
 
-impl Line {
+impl Change {
     fn categorize(path: &str) -> Category {
         if path.contains("test") {
             Category::Test
@@ -74,8 +74,8 @@ impl Line {
     }
 }
 
-impl Into<Line> for (String, Header, Path) {
-    fn into(self: (String, Header, Path)) -> Line {
+impl Into<Change> for (String, Header, Path) {
+    fn into(self: (String, Header, Path)) -> Change {
         let (
             repo,
             Header {
@@ -89,13 +89,13 @@ impl Into<Line> for (String, Header, Path) {
                 path,
             },
         ) = self;
-        let category = Line::categorize(&path);
+        let category = Change::categorize(&path);
         let ext = StdPath::new(&path)
             .extension()
             .map(std::ffi::OsStr::to_str)
             .and_then(identity)
             .map(|s| s.into());
-        Line {
+        Change {
             repo,
             sha,
             author,
@@ -118,7 +118,7 @@ enum State {
 trait Emitter {
     fn emit(
         &mut self,
-        line: Line,
+        line: Change,
     ) -> Result<(), Box<dyn Error>>;
 }
 
@@ -127,7 +127,7 @@ struct Stdout;
 impl Emitter for Stdout {
     fn emit(
         &mut self,
-        line: Line,
+        line: Change,
     ) -> Result<(), Box<dyn Error>> {
         println!("{}", serde_json::to_string(&line)?);
         Ok(())
@@ -228,12 +228,12 @@ mod tests {
 
     #[test]
     fn paths_with_test_are_categorized() {
-        assert_eq!(Line::categorize("foo/test/bar.txt"), Category::Test)
+        assert_eq!(Change::categorize("foo/test/bar.txt"), Category::Test)
     }
 
     #[test]
     fn paths_without_test_are_categorized() {
-        assert_eq!(Line::categorize("foo/bar/baz.txt"), Category::Default)
+        assert_eq!(Change::categorize("foo/bar/baz.txt"), Category::Default)
     }
 
     #[test]
@@ -242,7 +242,7 @@ mod tests {
         impl Emitter for Noop {
             fn emit(
                 &mut self,
-                _: Line,
+                _: Change,
             ) -> Result<(), Box<dyn Error>> {
                 Ok(())
             }
