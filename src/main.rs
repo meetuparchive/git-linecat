@@ -238,21 +238,27 @@ mod tests {
 
     #[test]
     fn parses_lines() {
-        struct Noop;
-        impl Emitter for Noop {
+        #[derive(Default)]
+        struct Counter {
+            n: usize,
+        }
+        impl Emitter for Counter {
             fn emit(
                 &mut self,
                 _: Change,
             ) -> Result<(), Box<dyn Error>> {
+                self.n += 1;
                 Ok(())
             }
         }
+        let mut counter = Counter::default();
         drop(run(
             "test".into(),
             &mut include_str!("../tests/data/git.log")
                 .lines()
                 .map(|l| l.to_string()),
-            &mut Noop,
-        ))
+            &mut counter,
+        ));
+        assert_eq!(1, counter.n);
     }
 }
