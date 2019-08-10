@@ -50,7 +50,7 @@ LOCATION 's3://your-s3-bucket/'
 
 ### 🔎 Sample queries
 
-#### kinds of files by ordered by frequency of change
+#### top kinds of files by frequency of change
 
 
 ```sql
@@ -58,9 +58,10 @@ select ext, count(*) as cnt
 from gitlog
 group by ext
 order by cnt desc
+limit 10
 ```
 
-#### top 10 paths by frequency of change
+#### top paths by frequency of change
 
 ```sql
 select count(*) as cnt, path
@@ -77,6 +78,7 @@ select path, sum(additions - deletions) as net_adds
 from gitlog
 group by path
 order by net_adds desc
+limit 10
 ```
 
 ### top changers of code ownership
@@ -87,6 +89,7 @@ from gitlog
 where path = 'CODEOWNERS'
 group by author
 order by changes desc
+limit 10
 ```
 
 ### tips
