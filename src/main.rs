@@ -25,6 +25,10 @@ struct Header {
     timestamp: String,
 }
 
+/// text-only path changes
+/// binary file changes represent line
+/// changes with `-` which is of no use
+/// to us
 #[derive(Deserialize, Recap)]
 #[recap(regex = r#"(?x)
     (?P<additions>\d+)
@@ -112,13 +116,19 @@ enum State {
 }
 
 trait Emitter {
-    fn emit(line: Line) -> Result<(), Box<dyn Error>>;
+    fn emit(
+        &mut self,
+        line: Line,
+    ) -> Result<(), Box<dyn Error>>;
 }
 
 struct Stdout;
 
 impl Emitter for Stdout {
-    fn emit(line: Line) -> Result<(), Box<dyn Error>> {
+    fn emit(
+        &mut self,
+        line: Line,
+    ) -> Result<(), Box<dyn Error>> {
         println!("{}", serde_json::to_string(&line)?);
         Ok(())
     }
@@ -149,22 +159,26 @@ fn main() -> Result<(), Box<dyn Error>> {
         "-" => run(
             repository,
             &mut stdin().lock().lines().filter_map(Result::ok),
+            &mut Stdout,
         ),
         _ => run(
             repository,
             &mut BufReader::new(&File::open(logs)?)
                 .lines()
                 .filter_map(Result::ok),
+            &mut Stdout,
         ),
     }
 }
 
-fn run<L>(
+fn run<L, E>(
     repository: String,
     lines: &mut L,
+    emitter: &mut E,
 ) -> Result<(), Box<dyn Error>>
 where
     L: Iterator<Item = String>,
+    E: Emitter,
 {
     lines
         .try_fold(State::Reset, |state, line| {
@@ -173,18 +187,24 @@ where
                 State::Next(header) => {
                     if line.is_empty() {
                         State::Reset
+                    } else if line.starts_with('-') {
+                        // binary file
+                        State::Next(header)
                     } else {
-                        State::Emit(header, line.parse()?)
+                        // we expect a path, but some commits pay be empty (no path) so we must be flexible
+                        match line.parse::<Path>() {
+                            Ok(path) => State::Emit(header, path),
+                            _ => State::Next(line.parse()?),
+                        }
                     }
                 }
                 State::Emit(header, diff) => {
-                    let next = if line.is_empty() {
+                    emitter.emit((repository.clone(), header.clone(), diff).into())?;
+                    if line.is_empty() {
                         State::Reset
                     } else {
-                        State::Next(header.clone())
-                    };
-                    Stdout::emit((repository.clone(), header, diff).into())?;
-                    next
+                        State::Next(header)
+                    }
                 }
             })
         })
@@ -214,5 +234,25 @@ mod tests {
     #[test]
     fn paths_without_test_are_categorized() {
         assert_eq!(Line::categorize("foo/bar/baz.txt"), Category::Default)
+    }
+
+    #[test]
+    fn parses_lines() {
+        struct Noop;
+        impl Emitter for Noop {
+            fn emit(
+                &mut self,
+                _: Line,
+            ) -> Result<(), Box<dyn Error>> {
+                Ok(())
+            }
+        }
+        drop(run(
+            "test".into(),
+            &mut include_str!("../tests/data/git.log")
+                .lines()
+                .map(|l| l.to_string()),
+            &mut Noop,
+        ))
     }
 }

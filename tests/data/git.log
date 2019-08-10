@@ -1,0 +1,8 @@
+"31f585fb1da181e4af8af1eef2b3fd2a85284ab6","luna@moon.com","2019-08-09 15:36:50 -0400"
+11      10      foo/bar/baz.c
+67      0       path/to/file.pl
+
+"c429aa605be020ea58365922ea048746e64deb44","binary@files.com","2019-08-09 14:18:15 -0400"
+-       -       src/main/java/foo.mp3
+
+"b6b72a32610b368d8dbd81faaa7e16d64d7058cd","empty@commits.moon","2019-08-09 12:32:19 -0400"
