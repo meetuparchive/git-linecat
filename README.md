@@ -48,9 +48,9 @@ ROW FORMAT SERDE 'org.openx.data.jsonserde.JsonSerDe'
 LOCATION 's3://your-s3-bucket/'
 ```
 
-### 🔎 Sample queries
+#### 🔎 Sample queries
 
-#### top kinds of files by frequency of change
+##### top kinds of files by frequency of change
 
 
 ```sql
@@ -61,7 +61,7 @@ order by cnt desc
 limit 10
 ```
 
-#### top paths by frequency of change
+##### top paths by frequency of change
 
 ```sql
 select count(*) as cnt, path
@@ -71,7 +71,7 @@ order by cnt desc
 limit 10
 ```
 
-### top paths introducing net additions to code
+##### top paths introducing net additions to code
 
 ```sql
 select path, sum(additions - deletions) as net_adds
@@ -81,7 +81,7 @@ order by net_adds desc
 limit 10
 ```
 
-### top changers of code ownership
+##### top changers of code ownership
 
 ```sql
 select count(*) as changes, author
@@ -92,7 +92,7 @@ order by changes desc
 limit 10
 ```
 
-### tips
+#### tips
 
 You may find [these functions](https://docs.aws.amazon.com/athena/latest/ug/functions-operators-reference-section.html) helpful in authoring queries.
 
