@@ -50,7 +50,7 @@ enum Category {
     Default,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Default, Debug, Serialize)]
 struct Change {
     repo: String,
     sha: String,
@@ -234,6 +234,11 @@ mod tests {
     #[test]
     fn paths_without_test_are_categorized() {
         assert_eq!(Change::categorize("foo/bar/baz.txt"), Category::Default)
+    }
+
+    #[test]
+    fn stdout_emits() {
+        assert!(Stdout.emit(Change::default()).is_ok())
     }
 
     #[test]
