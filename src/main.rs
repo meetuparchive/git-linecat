@@ -50,6 +50,12 @@ enum Category {
     Default,
 }
 
+impl Default for Category {
+    fn default() -> Self {
+        Category::Default
+    }
+}
+
 #[derive(Default, Debug, Serialize)]
 struct Change {
     repo: String,
