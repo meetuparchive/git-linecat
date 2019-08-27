@@ -1,4 +1,4 @@
-# git linecat [![Build Status](https://travis-ci.com/meetup/git-linecat.svg?branch=master)](https://travis-ci.com/meetup/git-linecat) [![Coverage Status](https://coveralls.io/repos/github/meetup/git-linecat/badge.svg?branch=master)](https://coveralls.io/github/meetup/git-linecat?branch=master)
+# git linecat [![Build Status](https://travis-ci.com/meetup/git-linecat.svg?branch=master)](https://travis-ci.com/meetup/git-linecat) [![Coverage Status](https://coveralls.io/repos/github/meetup/git-linecat/badge.svg?branch=master)](https://coveralls.io/github/meetup/git-linecat?branch=master) [![](https://github.com/meetup/git-linecat/workflows/Main/badge.svg)](https://github.com/meetup/git-linecat/actions)
 
 > 😽 a utility for transforming and categorizing git log output
 
@@ -20,7 +20,7 @@ Emits output in the form of [newline delimited json](http://ndjson.org/) for fur
 
 ### 👩‍🔬analyzing data
 
-[AWS Athena](https://aws.amazon.com/athena/) makes it easy to ask and answer questions about your json-formatted git data. 
+[AWS Athena](https://aws.amazon.com/athena/) makes it easy to ask and answer questions about your json-formatted git data.
 
 You can load data into Athena simply by pipeline git log into `git-linecat` then to AWS S3
 
@@ -42,8 +42,8 @@ CREATE EXTERNAL TABLE if not exists gitlog (
 	category string,
 	ext string,
 	additions int,
-	deletions int       
-) 
+	deletions int
+)
 ROW FORMAT SERDE 'org.openx.data.jsonserde.JsonSerDe'
 LOCATION 's3://your-s3-bucket/'
 ```
