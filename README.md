@@ -4,9 +4,10 @@
 
 ## 🤔 about
 
-The only constant in software is change which begs the question. What kind of patterns
-of change occur in your software project. Git is a database of change but does not provide
-an interface for analyizing that change. This is where `git-linecat` comes in.
+The only constant in software is change which begs the question: What kind of patterns
+of change occur in _your_ software project?
+
+Git is a database of change but does not provide an interface for analyizing that change. This is where `git-linecat` can help.
 
 ## 📦 install
 
