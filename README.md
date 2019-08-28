@@ -8,6 +8,25 @@ The only constant in software is change which begs the question. What kind of pa
 of change occur in your software project. Git is a database of change but does not provide
 an interface for analyizing that change. This is where `git-linecat` comes in.
 
+## 📦 install
+
+### 🍺 Via Homebrew
+
+```sh
+$ tap meetup/tools
+$ brew install git-linecat
+```
+
+### 🏷️ Via GitHub Releases
+
+Prebuilt binaries for OSX and Linux are available for download directly from GitHub Releases
+
+```sh
+$ curl -L \
+ "https://github.com/meetup/git-linecat/releases/download/v0.0.0git-linecat-v0.0.0-$(uname -s)-$(uname -m).tar.gz" \
+  | tar -xz
+```
+
 ## 🤸usage
 
 Expects input in the form
