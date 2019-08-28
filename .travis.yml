@@ -37,7 +37,6 @@ DEPLOY_TO_GITHUB: &DEPLOY_TO_GITHUB
     skip_cleanup: true
     on:
       tags: true
-      condition: env(GH_TOKEN) IS present
 
 matrix:
   include:
@@ -83,7 +82,7 @@ install: |
     cargo install cargo-update || echo "cargo-update already installed"
     RUSTFLAGS="--cfg procmacro2_semver_exempt" cargo install cargo-tarpaulin || echo "cargo-tarpaulin already installed"
     cargo install-update -a
- 
+
     # should only be necessary until rustfmt produces consistent results in stable/nightly
     rustup component add rustfmt
   fi
