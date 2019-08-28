@@ -42,7 +42,7 @@ Emits output in the form of [newline delimited json](http://ndjson.org/) for fur
 
 [AWS Athena](https://aws.amazon.com/athena/) makes it easy to both ask and answer questions about your json-formatted git data.
 
-You can load git data into Athena simply by piping git log into `git-linecat` then to AWS S3
+You can load git data into Athena simply by piping git log into `git-linecat` along with a repository name, then to AWS S3
 
 ```sh
 $ git log --pretty=format:'"%H","%ae","%ai"' --numstat --no-merge \
