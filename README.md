@@ -24,7 +24,7 @@ Prebuilt binaries for OSX and Linux are available for download directly from Git
 
 ```sh
 $ curl -L \
- "https://github.com/meetup/git-linecat/releases/download/v0.0.0git-linecat-v0.0.0-$(uname -s)-$(uname -m).tar.gz" \
+ "https://github.com/meetup/git-linecat/releases/download/v0.0.0/git-linecat-v0.0.0-$(uname -s)-$(uname -m).tar.gz" \
   | tar -xz
 ```
 
@@ -42,11 +42,11 @@ Emits output in the form of [newline delimited json](http://ndjson.org/) for fur
 
 [AWS Athena](https://aws.amazon.com/athena/) makes it easy to both ask and answer questions about your json-formatted git data.
 
-You can load git data into Athena simply by piping git log into `git-linecat` along with a repository name, then to AWS S3
+You can load git data into AWS Athena simply by piping git log into `git-linecat` along with a repository name, then to uplading AWS S3
 
 ```sh
 $ git log --pretty=format:'"%H","%ae","%ai"' --numstat --no-merge \
-	| cargo run -q -- -r your/repo \
+	| git-linecat -r your/repo \
 	| aws s3 cp - s3://your-s3-bucket/linecat.json
 ```
 
